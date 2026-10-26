@@ -1,0 +1,14 @@
+{
+  "name": "teste-tecnico-performance-k6",
+  "version": "1.0.0",
+  "description": "Teste de carga com k6: 500 usuários simultâneos por 5 minutos contra uma API mock",
+  "private": true,
+  "scripts": {
+    "api": "node api/server.js",
+    "test:fumaca": "k6 run --out web-dashboard=export=relatorios/fumaca/dashboard.html tests/fumaca.js",
+    "test:carga": "k6 run --out web-dashboard=export=relatorios/carga/dashboard.html tests/carga.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

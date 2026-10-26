@@ -1,0 +1,123 @@
+name: Testes de Performance (k6)
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # permite rodar manualmente pela aba Actions, escolhendo a carga
+    inputs:
+      vus:
+        description: "Usuários simultâneos"
+        default: "500"
+      duracao:
+        description: "Duração do platô (ex.: 5m, 10m)"
+        default: "5m"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  K6_VERSION: "2.3.0"
+  BASE_URL: http://localhost:3333
+
+jobs:
+  # Fumaça: valida script e ambiente em todo push (30 s)
+  fumaca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: ${{ env.K6_VERSION }}
+
+      - name: Subir a API mock
+        run: |
+          npm run api > api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf "$BASE_URL/health" && exit 0; sleep 1; done
+          echo "API não subiu"; cat api.log; exit 1
+
+      - name: Teste de fumaça
+        run: npm run test:fumaca
+
+      - name: Resumo no GitHub
+        if: ${{ !cancelled() }}
+        run: cat relatorios/fumaca/resumo.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: relatorio-fumaca
+          path: relatorios/fumaca/
+          retention-days: 30
+
+  # Carga: 500 usuários por 5 minutos (só na main ou quando disparado manualmente)
+  carga:
+    needs: fumaca
+    if: ${{ github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: ${{ env.K6_VERSION }}
+
+      - name: Subir a API mock
+        run: |
+          npm run api > api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf "$BASE_URL/health" && exit 0; sleep 1; done
+          echo "API não subiu"; cat api.log; exit 1
+
+      - name: Teste de carga
+        env:
+          VUS: ${{ github.event.inputs.vus || '500' }}
+          DURACAO: ${{ github.event.inputs.duracao || '5m' }}
+        run: npm run test:carga
+
+      - name: Resumo no GitHub
+        if: ${{ !cancelled() }}
+        run: cat relatorios/carga/resumo.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: relatorio-carga
+          path: |
+            relatorios/carga/
+            api.log
+          retention-days: 30
+
+      - name: Preparar relatório para o GitHub Pages
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: relatorios/carga/
+
+  # CD: publica o relatório de carga no GitHub Pages (só na main)
+  deploy-report:
+    needs: carga
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.carga.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

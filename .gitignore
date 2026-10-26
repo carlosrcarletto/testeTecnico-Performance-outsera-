@@ -1,0 +1,7 @@
+node_modules/
+
+# Relatórios gerados a cada execução (as pastas ficam versionadas pelo .gitkeep,
+# porque o k6 não cria diretórios ao salvar o relatório)
+relatorios/**/*
+!relatorios/*/
+!relatorios/**/.gitkeep

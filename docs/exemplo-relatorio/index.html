@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste de carga: 500 usuários simultâneos por 5 minutos</title>
+<style>
+:root{--fundo:#f5f6f8;--sup:#fff;--txt:#1d2330;--suave:#5b6475;--borda:#dde1e8;--bom:#1b7f3b;--ruim:#c62828;--info:#1f6feb;--barra:#9cc0f9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--fundo:#12151b;--sup:#1b1f27;--txt:#e6e9ef;--suave:#9aa3b2;--borda:#2c323d;--bom:#4cc277;--ruim:#ff6b6b;--info:#6ea8fe;--barra:#2f5597;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--fundo);color:var(--txt);line-height:1.5}
+main{max-width:1100px;margin:0 auto;padding:1.5rem}h1{margin:0 0 .25rem}h2{margin-top:2rem}.sub{color:var(--suave);margin:0}
+.status{display:inline-block;margin-top:.75rem;padding:.35rem .8rem;border-radius:999px;font-weight:700;color:#fff;background:var(--bom)}
+.cartoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.75rem;margin-top:1.25rem}
+.cartao{background:var(--sup);border:1px solid var(--borda);border-radius:10px;padding:.8rem 1rem;border-top:4px solid var(--info)}
+.cartao.bom{border-top-color:var(--bom)}.cartao.ruim{border-top-color:var(--ruim)}
+.cartao span{display:block;color:var(--suave);font-size:.85rem}.cartao strong{font-size:1.35rem}
+.rolagem{overflow-x:auto}table{width:100%;border-collapse:collapse;background:var(--sup);border:1px solid var(--borda);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:.6rem .75rem;border-bottom:1px solid var(--borda);vertical-align:top}th{font-size:.85rem;color:var(--suave)}
+small{color:var(--suave)}code{font-size:.9em}
+.barra{position:relative;min-width:140px;background:var(--fundo);border-radius:4px;height:1.6rem}
+.barra i{position:absolute;inset:0 auto 0 0;background:var(--barra);border-radius:4px}.barra b{position:relative;padding-left:.4rem;line-height:1.6rem}
+ul.achados{list-style:none;padding:0}ul.achados li{background:var(--sup);border:1px solid var(--borda);border-left:4px solid var(--info);border-radius:8px;padding:.6rem .9rem;margin-bottom:.5rem}
+ul.achados li.ok{border-left-color:var(--bom)}ul.achados li.alerta{border-left-color:var(--ruim)}
+.txt-bom{color:var(--bom);font-weight:700}.txt-ruim{color:var(--ruim);font-weight:700}
+a{color:var(--info)}.nota{color:var(--suave);font-size:.9rem}
+</style></head><body><main>
+<h1>Teste de carga: 500 usuários simultâneos por 5 minutos</h1>
+<p class="sub">Gerado em 2026-10-26T16:43:11.556Z · duração 6,1 min</p>
+<span class="status">Todos os SLOs atendidos</span>
+
+<div class="cartoes">
+<div class="cartao "><span>Usuários simultâneos (máx.)</span><strong>500</strong></div>
+<div class="cartao "><span>Requisições</span><strong>103.199</strong></div>
+<div class="cartao "><span>Vazão</span><strong>281,7 req/s</strong></div>
+<div class="cartao bom"><span>Taxa de erro</span><strong>0,00%</strong></div>
+<div class="cartao bom"><span>Tempo p95</span><strong>165 ms</strong></div>
+<div class="cartao bom"><span>Tempo p99</span><strong>299 ms</strong></div>
+<div class="cartao bom"><span>Jornadas concluídas</span><strong>100,00%</strong></div>
+<div class="cartao "><span>Pedidos criados</span><strong>25.799</strong></div>
+</div>
+
+<h2>Diagnóstico automático</h2>
+<ul class="achados"><li class="ok">✅ Todos os 15 SLOs foram atendidos.</li><li class="ok">✅ Nenhuma requisição falhou: a API se manteve disponível durante todo o teste.</li><li class="info">ℹ️ Endpoint mais lento: POST /api/pedidos com p95 de 263 ms (2,5x o mais rápido), dentro do SLO.</li><li class="info">ℹ️ 99,40% do tempo médio de resposta é espera pelo servidor (TTFB): o custo está no processamento da API, não na rede.</li><li class="alerta">⚠️ Event loop do servidor travado (lag p99 61 ms, máximo 284 ms): processamento síncrono pesado atrasa TODAS as rotas, inclusive as leves.</li><li class="alerta">⚠️ Pool do banco saturado: até 35 pedidos aguardaram conexão (pool com 10). Afeta diretamente POST /api/pedidos.</li><li class="info">ℹ️ CPU do processo da API em 50% de média: ainda há folga, mas pouca para picos.</li><li class="info">ℹ️ Vazão: 281,7 req/s e 70,4 jornadas/s com até 500 usuários simultâneos.</li></ul>
+<p class="nota">Regras simples aplicadas sobre as métricas; a análise completa e as recomendações estão em <code>docs/ANALISE.md</code>.</p>
+
+<h2>SLOs (thresholds)</h2>
+<div class="rolagem"><table><thead><tr><th>Resultado</th><th>Métrica</th><th>Regra</th></tr></thead><tbody>
+<tr><td class="txt-bom">✅ ok</td><td>Jornadas de compra concluídas</td><td><code>rate&gt;0.99</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Taxa de erro HTTP</td><td><code>rate&lt;0.01</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Taxa de erro HTTP</td><td><code>rate&lt;0.10</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Taxa de erro: GET /api/produtos</td><td><code>rate&lt;0.01</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Taxa de erro: GET /api/produtos/:id</td><td><code>rate&lt;0.01</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Taxa de erro: POST /api/login</td><td><code>rate&lt;0.01</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Taxa de erro: POST /api/pedidos</td><td><code>rate&lt;0.01</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta (todas as requisições)</td><td><code>p(95)&lt;500</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta (todas as requisições)</td><td><code>p(99)&lt;1500</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta somado da jornada</td><td><code>p(95)&lt;2000</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta: GET /api/produtos</td><td><code>p(95)&lt;300</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta: GET /api/produtos/:id</td><td><code>p(95)&lt;300</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta: POST /api/login</td><td><code>p(95)&lt;800</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Tempo de resposta: POST /api/pedidos</td><td><code>p(95)&lt;1000</code></td></tr><tr><td class="txt-bom">✅ ok</td><td>Verificações funcionais aprovadas</td><td><code>rate&gt;0.99</code></td></tr>
+</tbody></table></div>
+
+<h2>Tempo de resposta por endpoint</h2>
+<div class="rolagem"><table><thead><tr><th>Endpoint</th><th>Média</th><th>p90</th><th>p95</th><th>p99</th><th>Máx</th><th>Erros</th></tr></thead>
+<tbody><tr><td><code>GET /api/produtos</code><br><small>Listar produtos (vitrine)</small></td>
+        <td>23 ms</td><td>61 ms</td>
+        <td><div class="barra"><i style="width:39%"></i><b>104 ms</b></div></td>
+        <td>200 ms</td><td>531 ms</td>
+        <td class="">0,00%</td></tr><tr><td><code>GET /api/produtos/:id</code><br><small>Detalhe do produto</small></td>
+        <td>23 ms</td><td>62 ms</td>
+        <td><div class="barra"><i style="width:40%"></i><b>105 ms</b></div></td>
+        <td>197 ms</td><td>318 ms</td>
+        <td class="">0,00%</td></tr><tr><td><code>POST /api/login</code><br><small>Login (hash de senha)</small></td>
+        <td>31 ms</td><td>70 ms</td>
+        <td><div class="barra"><i style="width:44%"></i><b>115 ms</b></div></td>
+        <td>207 ms</td><td>324 ms</td>
+        <td class="">0,00%</td></tr><tr><td><code>POST /api/pedidos</code><br><small>Criar pedido (grava no banco)</small></td>
+        <td>123 ms</td><td>188 ms</td>
+        <td><div class="barra"><i style="width:100%"></i><b>263 ms</b></div></td>
+        <td>453 ms</td><td>859 ms</td>
+        <td class="">0,00%</td></tr></tbody></table></div>
+
+<h2>Onde o tempo é gasto</h2>
+<div class="rolagem"><table><thead><tr><th>Fase da requisição</th><th>O que é</th><th>Média</th><th>p95</th></tr></thead><tbody>
+<tr><td>Bloqueado</td><td>esperando conexão livre / DNS</td><td>0,0 ms</td><td>0,0 ms</td></tr><tr><td>Conectando</td><td>abrindo conexão TCP</td><td>0,0 ms</td><td>0,0 ms</td></tr><tr><td>Enviando</td><td>enviando a requisição</td><td>0,1 ms</td><td>0,5 ms</td></tr><tr><td>Esperando (TTFB)</td><td>servidor processando</td><td>49 ms</td><td>164 ms</td></tr><tr><td>Recebendo</td><td>baixando a resposta</td><td>0,2 ms</td><td>0,5 ms</td></tr>
+</tbody></table></div>
+
+<h2>Visão do servidor</h2>
+<div class="cartoes">
+<div class="cartao bom"><span>CPU média da API</span><strong>50%</strong></div>
+<div class="cartao ruim"><span>Lag do event loop p99</span><strong>61 ms</strong></div>
+<div class="cartao "><span>Lag do event loop máx.</span><strong>284 ms</strong></div>
+<div class="cartao ruim"><span>Fila máx. no banco</span><strong>35 / pool 10</strong></div>
+</div>
+
+<h2>Gráficos ao longo do tempo</h2>
+<p>Abra o <a href="dashboard.html">dashboard do k6</a> para ver vazão, latência e usuários segundo a segundo.</p>
+<p class="nota">O dashboard é gerado pelos comandos <code>npm run test:carga</code> e <code>npm run test:fumaca</code> (opção <code>--out web-dashboard</code>). Se o link não abrir, o teste foi executado sem essa opção.</p>
+</main></body></html>
